@@ -1,0 +1,48 @@
+services:
+  db:
+    image: mariadb:11
+    container_name: gw_whaticket_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - gw_whaticket_db_data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - gw_whaticket_net
+
+  whaticket:
+    image: canove/whaticket:latest
+    container_name: gw_whaticket_app
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "3001:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASS: ${MYSQL_PASSWORD}
+      MYSQL_DB: ${MYSQL_DATABASE}
+      MYSQL_DIALECT: mysql
+      FRONT_URL: ${FRONT_URL}
+      BACK_URL: ${BACK_URL}
+      INSTANCE_NAME: GrupoWin
+    volumes:
+      - gw_whaticket_app_data:/app/data
+    networks:
+      - gw_whaticket_net
+
+volumes:
+  gw_whaticket_db_data:
+  gw_whaticket_app_data:
+
+networks:
+  gw_whaticket_net:
+    name: gw_whaticket_net

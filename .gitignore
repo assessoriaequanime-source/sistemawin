@@ -1,0 +1,16 @@
+# env/segredos
+.env
+**/.env
+
+# dados/volumes
+**/data/
+**/volumes/
+backups/
+
+# logs
+*.log
+
+# caches
+node_modules/
+__pycache__/
+*.pyc
